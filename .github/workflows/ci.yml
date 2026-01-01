@@ -49,6 +49,18 @@ jobs:
       - if: steps.tag_check.outputs.exists == 'false'
         name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        if: steps.tag_check.outputs.exists == 'false'
+        name: Create GitHub Release
+        run: |
+          gh release create "${{ steps.version.outputs.version }}" \
+            --generate-notes
+      - if: steps.tag_check.outputs.exists == 'false'
+        name: Update latest tag
+        run: |
+          git tag -f latest
+          git push origin latest --force
   test:
     runs-on: ubuntu-latest
     steps:
