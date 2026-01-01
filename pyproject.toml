@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contains-snippet"
+version = "0.1.0"
+description = "CLI tool to check if a snippet exists in files"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+
+[project.scripts]
+contains-snippet = "contains_snippet.cli:main"
