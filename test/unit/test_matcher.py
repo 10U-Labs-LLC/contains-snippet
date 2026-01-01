@@ -111,6 +111,12 @@ class TestCommentedMatch:
         """Non-empty snippet doesn't match empty content."""
         assert not commented_match("hello", "")
 
+    def test_first_line_matches_but_extends_past_eof(self) -> None:
+        """First line matches but snippet extends past end of file."""
+        snippet = "line1\nline2\nline3"
+        content = "# other\n# line1"
+        assert not commented_match(snippet, content)
+
 
 @pytest.mark.unit
 class TestCheckFile:
