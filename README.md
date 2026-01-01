@@ -14,7 +14,7 @@ pip install -e .
 ## Usage
 
 ```bash
-contains-snippet --content-file SNIPPET_FILE FILE [FILE ...]
+contains-snippet --snippet-file SNIPPET_FILE FILE [FILE ...]
 ```
 
 ### Exit Codes
@@ -34,13 +34,13 @@ contains-snippet --content-file SNIPPET_FILE FILE [FILE ...]
 Check if a license notice appears in a README:
 
 ```bash
-contains-snippet --content-file license_notice.txt README.md
+contains-snippet --snippet-file license_notice.txt README.md
 ```
 
 Check if a header comment exists in multiple Python files:
 
 ```bash
-contains-snippet --content-file header.txt src/*.py
+contains-snippet --snippet-file header.txt src/*.py
 ```
 
 ### Configuring Match Behavior
@@ -51,10 +51,10 @@ Force all files to use commented matching with a specific prefix:
 
 ```bash
 # Check JavaScript files with // comments
-contains-snippet --content-file header.txt --comment-prefix "//" src/*.js
+contains-snippet --snippet-file header.txt --comment-prefix "//" src/*.js
 
 # Force .md files to match as comments (not raw)
-contains-snippet --content-file notice.txt --comment-prefix "#" docs/*.md
+contains-snippet --snippet-file notice.txt --comment-prefix "#" docs/*.md
 ```
 
 #### Infer from Extension: `--infer-comment-prefix`
@@ -70,7 +70,7 @@ Enable extension-based inference using built-in mapping:
 | (other)   | raw        |
 
 ```bash
-contains-snippet --content-file header.txt --infer-comment-prefix src/*.py docs/*.md
+contains-snippet --snippet-file header.txt --infer-comment-prefix src/*.py docs/*.md
 ```
 
 #### Custom Extension Mapping: `--comment-prefix-map`
@@ -79,13 +79,13 @@ Override or extend the built-in mapping (requires `--infer-comment-prefix`):
 
 ```bash
 # Add JavaScript and TypeScript support
-contains-snippet --content-file header.txt \
+contains-snippet --snippet-file header.txt \
   --infer-comment-prefix \
   --comment-prefix-map ".js=//,.ts=//" \
   src/*
 
 # Override Python to use raw matching
-contains-snippet --content-file notice.txt \
+contains-snippet --snippet-file notice.txt \
   --infer-comment-prefix \
   --comment-prefix-map ".py=raw" \
   src/*.py

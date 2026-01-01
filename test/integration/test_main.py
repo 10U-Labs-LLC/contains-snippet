@@ -14,7 +14,7 @@ def test_main_module_invokes_cli(tmp_path: pytest.TempPathFactory) -> None:
     target = tmp_path / "t.md"  # type: ignore[operator]
     target.write_text("x")
 
-    with patch("sys.argv", ["prog", "--content-file", str(snippet), str(target)]):
+    with patch("sys.argv", ["prog", "--snippet-file", str(snippet), str(target)]):
         with pytest.raises(SystemExit) as exc_info:
             import contains_snippet.__main__  # pylint: disable=import-outside-toplevel
             importlib.reload(contains_snippet.__main__)

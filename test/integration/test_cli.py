@@ -25,7 +25,7 @@ class TestMainFunction:
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "t.md").write_text("hello world")
         code = run_main_with_args(
-            ["--content-file", str(tmp_path / "s.txt"), str(tmp_path / "t.md")]
+            ["--snippet-file", str(tmp_path / "s.txt"), str(tmp_path / "t.md")]
         )
         assert code == 0
 
@@ -34,24 +34,24 @@ class TestMainFunction:
         (tmp_path / "s.txt").write_text("missing")
         (tmp_path / "t.md").write_text("hello world")
         code = run_main_with_args(
-            ["--content-file", str(tmp_path / "s.txt"), str(tmp_path / "t.md")]
+            ["--snippet-file", str(tmp_path / "s.txt"), str(tmp_path / "t.md")]
         )
         assert code == 1
 
     def test_missing_content_file_arg_exits_2(self) -> None:
-        """Exit 2 when --content-file is missing."""
+        """Exit 2 when --snippet-file is missing."""
         assert run_main_with_args(["somefile.md"]) == 2
 
     def test_missing_target_files_exits_2(self, tmp_path: Path) -> None:
         """Exit 2 when no target files provided."""
         (tmp_path / "s.txt").write_text("hello")
-        assert run_main_with_args(["--content-file", str(tmp_path / "s.txt")]) == 2
+        assert run_main_with_args(["--snippet-file", str(tmp_path / "s.txt")]) == 2
 
     def test_unreadable_content_file_exits_2(self, tmp_path: Path) -> None:
         """Exit 2 when content file cannot be read."""
         (tmp_path / "t.md").write_text("content")
         code = run_main_with_args(
-            ["--content-file", "/nonexistent/file.txt", str(tmp_path / "t.md")]
+            ["--snippet-file", "/nonexistent/file.txt", str(tmp_path / "t.md")]
         )
         assert code == 2
 
@@ -59,7 +59,7 @@ class TestMainFunction:
         """Exit 2 when target file cannot be read."""
         (tmp_path / "s.txt").write_text("hello")
         code = run_main_with_args(
-            ["--content-file", str(tmp_path / "s.txt"), "/nonexistent/file.md"]
+            ["--snippet-file", str(tmp_path / "s.txt"), "/nonexistent/file.md"]
         )
         assert code == 2
 
@@ -68,7 +68,7 @@ class TestMainFunction:
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "t.md").write_text("# hello")
         code = run_main_with_args([
-            "--content-file", str(tmp_path / "s.txt"),
+            "--snippet-file", str(tmp_path / "s.txt"),
             "--comment-prefix", "#",
             str(tmp_path / "t.md"),
         ])
@@ -79,7 +79,7 @@ class TestMainFunction:
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "t.py").write_text("# hello")
         code = run_main_with_args([
-            "--content-file", str(tmp_path / "s.txt"),
+            "--snippet-file", str(tmp_path / "s.txt"),
             "--infer-comment-prefix",
             str(tmp_path / "t.py"),
         ])
@@ -90,7 +90,7 @@ class TestMainFunction:
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "t.js").write_text("// hello")
         code = run_main_with_args([
-            "--content-file", str(tmp_path / "s.txt"),
+            "--snippet-file", str(tmp_path / "s.txt"),
             "--infer-comment-prefix",
             "--comment-prefix-map", ".js=//",
             str(tmp_path / "t.js"),
@@ -103,7 +103,7 @@ class TestMainFunction:
         (tmp_path / "f1.md").write_text("hello")
         (tmp_path / "f2.md").write_text("hello world")
         code = run_main_with_args([
-            "--content-file", str(tmp_path / "s.txt"),
+            "--snippet-file", str(tmp_path / "s.txt"),
             str(tmp_path / "f1.md"),
             str(tmp_path / "f2.md"),
         ])
@@ -115,7 +115,7 @@ class TestMainFunction:
         (tmp_path / "f1.md").write_text("hello")
         (tmp_path / "f2.md").write_text("goodbye")
         code = run_main_with_args([
-            "--content-file", str(tmp_path / "s.txt"),
+            "--snippet-file", str(tmp_path / "s.txt"),
             str(tmp_path / "f1.md"),
             str(tmp_path / "f2.md"),
         ])

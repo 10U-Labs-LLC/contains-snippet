@@ -17,7 +17,7 @@ class TestCliExitCodes:
         target_file = tmp_path / "target.md"
         target_file.write_text("say hello world")
 
-        result = run_cli("--content-file", str(content_file), str(target_file))
+        result = run_cli("--snippet-file", str(content_file), str(target_file))
         assert result.returncode == 0
         assert result.stdout == ""
 
@@ -28,12 +28,12 @@ class TestCliExitCodes:
         target_file = tmp_path / "target.md"
         target_file.write_text("no match here")
 
-        result = run_cli("--content-file", str(content_file), str(target_file))
+        result = run_cli("--snippet-file", str(content_file), str(target_file))
         assert result.returncode == 1
         assert result.stdout == ""
 
     def test_exit_2_missing_content_file_arg(self) -> None:
-        """Exit 2 when --content-file argument is missing."""
+        """Exit 2 when --snippet-file argument is missing."""
         result = run_cli("somefile.md")
         assert result.returncode == 2
 
@@ -42,7 +42,7 @@ class TestCliExitCodes:
         content_file = tmp_path / "snippet.txt"
         content_file.write_text("hello")
 
-        result = run_cli("--content-file", str(content_file))
+        result = run_cli("--snippet-file", str(content_file))
         assert result.returncode == 2
 
     def test_exit_2_unreadable_content_file(self, tmp_path: Path) -> None:
@@ -51,7 +51,7 @@ class TestCliExitCodes:
         target_file.write_text("content")
 
         result = run_cli(
-            "--content-file", "/nonexistent/path/file.txt", str(target_file)
+            "--snippet-file", "/nonexistent/path/file.txt", str(target_file)
         )
         assert result.returncode == 2
 
@@ -61,7 +61,7 @@ class TestCliExitCodes:
         content_file.write_text("hello")
 
         result = run_cli(
-            "--content-file", str(content_file), "/nonexistent/path/file.md"
+            "--snippet-file", str(content_file), "/nonexistent/path/file.md"
         )
         assert result.returncode == 2
 
@@ -79,7 +79,7 @@ class TestCliMultipleFiles:
         file2 = tmp_path / "file2.md"
         file2.write_text("also has target")
 
-        result = run_cli("--content-file", str(content_file), str(file1), str(file2))
+        result = run_cli("--snippet-file", str(content_file), str(file1), str(file2))
         assert result.returncode == 0
         assert result.stdout == ""
 
@@ -92,7 +92,7 @@ class TestCliMultipleFiles:
         file2 = tmp_path / "file2.md"
         file2.write_text("no match")
 
-        result = run_cli("--content-file", str(content_file), str(file1), str(file2))
+        result = run_cli("--snippet-file", str(content_file), str(file1), str(file2))
         assert result.returncode == 1
         assert result.stdout == ""
 
@@ -108,7 +108,7 @@ class TestCliCommentedMatch:
         py_file = tmp_path / "code.py"
         py_file.write_text("# snippet content\ncode = 1")
 
-        result = run_cli("--content-file", str(content_file), str(py_file))
+        result = run_cli("--snippet-file", str(content_file), str(py_file))
         assert result.returncode == 0
         assert result.stdout == ""
 
@@ -119,7 +119,7 @@ class TestCliCommentedMatch:
         yml_file = tmp_path / "config.yml"
         yml_file.write_text("#config line\nkey: value")
 
-        result = run_cli("--content-file", str(content_file), str(yml_file))
+        result = run_cli("--snippet-file", str(content_file), str(yml_file))
         assert result.returncode == 0
         assert result.stdout == ""
 
@@ -136,7 +136,7 @@ class TestCommentPrefixFlag:
         md_file.write_text("# hello")
 
         result = run_cli(
-            "--content-file", str(snippet), "--comment-prefix", "#", str(md_file)
+            "--snippet-file", str(snippet), "--comment-prefix", "#", str(md_file)
         )
         assert result.returncode == 0
         assert result.stdout == ""
@@ -149,7 +149,7 @@ class TestCommentPrefixFlag:
         md_file.write_text("hello")
 
         result = run_cli(
-            "--content-file", str(snippet), "--comment-prefix", "#", str(md_file)
+            "--snippet-file", str(snippet), "--comment-prefix", "#", str(md_file)
         )
         assert result.returncode == 1
 
@@ -161,7 +161,7 @@ class TestCommentPrefixFlag:
         js_file.write_text("// hello")
 
         result = run_cli(
-            "--content-file", str(snippet), "--comment-prefix", "//", str(js_file)
+            "--snippet-file", str(snippet), "--comment-prefix", "//", str(js_file)
         )
         assert result.returncode == 0
 
@@ -178,7 +178,7 @@ class TestInferCommentPrefixFlag:
         py_file.write_text("# hello")
 
         result = run_cli(
-            "--content-file", str(snippet), "--infer-comment-prefix", str(py_file)
+            "--snippet-file", str(snippet), "--infer-comment-prefix", str(py_file)
         )
         assert result.returncode == 0
 
@@ -190,7 +190,7 @@ class TestInferCommentPrefixFlag:
         md_file.write_text("hello")
 
         result = run_cli(
-            "--content-file", str(snippet), "--infer-comment-prefix", str(md_file)
+            "--snippet-file", str(snippet), "--infer-comment-prefix", str(md_file)
         )
         assert result.returncode == 0
 
@@ -202,7 +202,7 @@ class TestInferCommentPrefixFlag:
         txt_file.write_text("hello")
 
         result = run_cli(
-            "--content-file", str(snippet), "--infer-comment-prefix", str(txt_file)
+            "--snippet-file", str(snippet), "--infer-comment-prefix", str(txt_file)
         )
         assert result.returncode == 0
 
@@ -214,7 +214,7 @@ class TestInferCommentPrefixFlag:
         txt_file.write_text("# hello\n# world")
 
         result = run_cli(
-            "--content-file", str(snippet), "--infer-comment-prefix", str(txt_file)
+            "--snippet-file", str(snippet), "--infer-comment-prefix", str(txt_file)
         )
         assert result.returncode == 1
 
@@ -231,7 +231,7 @@ class TestCommentPrefixMapFlag:
         py_file.write_text("hello")
 
         result = run_cli(
-            "--content-file", str(snippet),
+            "--snippet-file", str(snippet),
             "--infer-comment-prefix",
             "--comment-prefix-map", ".py=raw",
             str(py_file)
@@ -246,7 +246,7 @@ class TestCommentPrefixMapFlag:
         js_file.write_text("// hello")
 
         result = run_cli(
-            "--content-file", str(snippet),
+            "--snippet-file", str(snippet),
             "--infer-comment-prefix",
             "--comment-prefix-map", ".js=//",
             str(js_file)
@@ -266,7 +266,7 @@ class TestPrecedence:
         py_file.write_text("// hello")
 
         result = run_cli(
-            "--content-file", str(snippet),
+            "--snippet-file", str(snippet),
             "--comment-prefix", "//",
             "--infer-comment-prefix",
             str(py_file)
@@ -281,7 +281,7 @@ class TestPrecedence:
         py_file.write_text("; hello")
 
         result = run_cli(
-            "--content-file", str(snippet),
+            "--snippet-file", str(snippet),
             "--comment-prefix", ";",
             "--infer-comment-prefix",
             "--comment-prefix-map", ".py=#",
@@ -307,7 +307,7 @@ class TestRealisticMarkdownScenarios:
             "Licensed under the Apache License, Version 2.0\n"
         )
 
-        result = run_cli("--content-file", str(snippet), str(readme))
+        result = run_cli("--snippet-file", str(snippet), str(readme))
         assert result.returncode == 0
 
     def test_code_block_in_docs(self, tmp_path: Path) -> None:
@@ -324,7 +324,7 @@ class TestRealisticMarkdownScenarios:
             "```\n"
         )
 
-        result = run_cli("--content-file", str(snippet), str(docs))
+        result = run_cli("--snippet-file", str(snippet), str(docs))
         assert result.returncode == 0
 
 
@@ -347,7 +347,7 @@ class TestRealisticPythonScenarios:
             "    pass\n"
         )
 
-        result = run_cli("--content-file", str(snippet), str(py_file))
+        result = run_cli("--snippet-file", str(snippet), str(py_file))
         assert result.returncode == 0
 
     def test_snippet_with_empty_lines(self, tmp_path: Path) -> None:
@@ -363,7 +363,7 @@ class TestRealisticPythonScenarios:
             "x = 1\n"
         )
 
-        result = run_cli("--content-file", str(snippet), str(py_file))
+        result = run_cli("--snippet-file", str(snippet), str(py_file))
         assert result.returncode == 0
 
 
@@ -385,7 +385,7 @@ class TestRealisticYamlScenarios:
             "on: push\n"
         )
 
-        result = run_cli("--content-file", str(snippet), str(workflow))
+        result = run_cli("--snippet-file", str(snippet), str(workflow))
         assert result.returncode == 0
 
     def test_yaml_extension(self, tmp_path: Path) -> None:
@@ -400,7 +400,7 @@ class TestRealisticYamlScenarios:
             "  host: localhost\n"
         )
 
-        result = run_cli("--content-file", str(snippet), str(config))
+        result = run_cli("--snippet-file", str(snippet), str(config))
         assert result.returncode == 0
 
 
@@ -416,7 +416,7 @@ class TestMixedFileTypes:
         readme = tmp_path / "README.md"
         readme.write_text("# Title\n\nImportant Notice\n")
 
-        result = run_cli("--content-file", str(md_snippet), str(readme))
+        result = run_cli("--snippet-file", str(md_snippet), str(readme))
         assert result.returncode == 0
 
         py_snippet = tmp_path / "py_snippet.txt"
@@ -432,7 +432,7 @@ class TestMixedFileTypes:
         config.write_text("#version 1.0\nkey: value\n")
 
         result = run_cli(
-            "--content-file",
+            "--snippet-file",
             str(md_snippet),
             str(readme),
         )
@@ -450,7 +450,7 @@ class TestMixedFileTypes:
         file2.write_text("This does not have the text")
 
         result = run_cli(
-            "--content-file", str(snippet), str(file1), str(file2)
+            "--snippet-file", str(snippet), str(file1), str(file2)
         )
         assert result.returncode == 1
         assert result.stdout == ""
@@ -475,7 +475,7 @@ class TestFlagScenarios:
         yml_file.write_text("#Copyright 2025\nkey: value")
 
         result = run_cli(
-            "--content-file", str(snippet),
+            "--snippet-file", str(snippet),
             "--infer-comment-prefix",
             str(py_file), str(md_file), str(yml_file)
         )
@@ -491,7 +491,7 @@ class TestFlagScenarios:
         js_file.write_text("// MIT License\nconst x = 1;")
 
         result = run_cli(
-            "--content-file", str(snippet),
+            "--snippet-file", str(snippet),
             "--comment-prefix", "//",
             str(js_file)
         )
@@ -509,7 +509,7 @@ class TestFlagScenarios:
         ts_file.write_text("//Copyright Notice\ntype X = string;")
 
         result = run_cli(
-            "--content-file", str(snippet),
+            "--snippet-file", str(snippet),
             "--infer-comment-prefix",
             "--comment-prefix-map", ".js=//,.ts=//",
             str(js_file), str(ts_file)
@@ -546,7 +546,7 @@ class TestFlagScenarios:
         )
 
         result = run_cli(
-            "--content-file", str(header),
+            "--snippet-file", str(header),
             "--infer-comment-prefix",
             str(py_file), str(readme), str(config)
         )

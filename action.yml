@@ -7,7 +7,7 @@ inputs:
   comment-prefix-map:
     description: Override extension mapping (e.g., .js=//,.ts=//)
     required: false
-  content-file:
+  snippet-file:
     description: Path to file containing the snippet
     required: true
   files:
@@ -23,7 +23,7 @@ runs:
     - run: pip install git+https://github.com/10U-Labs-LLC/contains-snippet.git
       shell: bash
     - run: |
-        ARGS="--content-file ${{ inputs.content-file }}"
+        ARGS="--snippet-file ${{ inputs.snippet-file }}"
         [ -n "${{ inputs.comment-prefix }}" ] && \
           ARGS="$ARGS --comment-prefix '${{ inputs.comment-prefix }}'"
         [ "${{ inputs.infer-comment-prefix }}" = "true" ] && \

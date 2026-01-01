@@ -31,7 +31,7 @@ def main() -> None:
         description="Check if a snippet exists in files"
     )
     parser.add_argument(
-        "--content-file",
+        "--snippet-file",
         required=True,
         type=Path,
         help="Path to the file containing the snippet to search for",
@@ -66,9 +66,9 @@ def main() -> None:
         sys.exit(2 if e.code != 0 else 0)
 
     try:
-        snippet = args.content_file.read_text()
+        snippet = args.snippet_file.read_text()
     except (OSError, IOError) as e:
-        print(f"Error reading content file: {e}", file=sys.stderr)
+        print(f"Error reading snippet file: {e}", file=sys.stderr)
         sys.exit(2)
 
     results = []
