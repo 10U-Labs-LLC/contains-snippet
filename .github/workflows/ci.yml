@@ -28,8 +28,10 @@ jobs:
         run: npm install -g markdownlint-cli
       - name: markdownlint
         run: markdownlint '*.md'
-      - name: Install package and pylint
-        run: pip install -e . pylint
+      - name: Install package
+        run: pip install -e .
+      - name: Install pylint
+        run: pip install pylint
       - name: Run pylint on source
         run: |
           python3 -m pylint src/ \
