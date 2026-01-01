@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-tags: true
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -29,7 +27,7 @@ jobs:
         name: Check if tag exists
         run: |
           TAG="${{ steps.version.outputs.version }}"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
