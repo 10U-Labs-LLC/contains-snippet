@@ -1,6 +1,9 @@
 # contains-snippet
 
-A command-line tool that checks whether a given snippet exists anywhere within a file. For plain text files (like `.md`), it searches the raw content directly. For source code files (`.py`, `.yml`, `.yaml`), it checks for the snippet rendered as comments.
+A command-line tool that checks whether a given snippet exists anywhere within
+a file. For plain text files (like `.md`), it searches the raw content
+directly. For source code files (`.py`, `.yml`, `.yaml`), it checks for the
+snippet rendered as comments.
 
 ## Installation
 
@@ -23,7 +26,7 @@ contains-snippet --content-file SNIPPET_FILE FILE [FILE ...]
 ### Matching Rules (Default)
 
 - `.md` files: Raw substring match
-- `.py`, `.yml`, `.yaml` files: Commented match (lines prefixed with `# ` or `#`)
+- `.py`, `.yml`, `.yaml` files: Commented match (lines prefixed with `#`)
 - Other extensions: Raw substring match
 
 ### Examples
