@@ -1,3 +1,5 @@
+"""Command-line interface for contains-snippet."""
+
 import argparse
 import sys
 from pathlib import Path
@@ -13,6 +15,7 @@ BUILTIN_PREFIX_MAP: dict[str, str | None] = {
 
 
 def parse_prefix_map(map_str: str) -> dict[str, str | None]:
+    """Parse extension-to-prefix mapping string like '.py=#,.js=//'."""
     result: dict[str, str | None] = {}
     for entry in map_str.split(","):
         ext, value = entry.split("=", 1)
@@ -23,6 +26,7 @@ def parse_prefix_map(map_str: str) -> dict[str, str | None]:
 
 
 def main() -> None:
+    """Run the contains-snippet CLI."""
     parser = argparse.ArgumentParser(
         description="Check if a snippet exists in files"
     )
