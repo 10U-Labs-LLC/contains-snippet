@@ -63,6 +63,16 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - ".github/workflows/ci.yml"
+      - "pyproject.toml"
+      - "src/**"
+      - "test/**"
   push:
     branches:
       - main
+    paths:
+      - ".github/workflows/ci.yml"
+      - "pyproject.toml"
+      - "src/**"
+      - "test/**"
