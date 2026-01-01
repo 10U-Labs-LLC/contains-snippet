@@ -1,4 +1,4 @@
-"""Unit tests for the __main__ module."""
+"""Integration tests for the __main__ module."""
 
 import importlib
 from unittest.mock import patch
@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_main_module_invokes_cli(tmp_path: pytest.TempPathFactory) -> None:
     """Importing __main__ calls the main function."""
     snippet = tmp_path / "s.txt"  # type: ignore[operator]
