@@ -17,11 +17,11 @@ classifiers = [
     "Topic :: Software Development :: Quality Assurance",
 ]
 description = "CLI tool to check if a snippet exists in files"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 name = "contains-snippet"
 readme = "README.md"
 requires-python = ">=3.10"
-version = "1.0.0"
+version = "1.0.1"
 
 [project.scripts]
 contains-snippet = "contains_snippet.cli:main"
