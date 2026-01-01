@@ -37,6 +37,8 @@ jobs:
           python3 -m pylint src/ \
             --fail-on=C,R,W \
             --fail-under=10.0
+      - name: Install pytest
+        run: pip install pytest
       - name: Run pylint on tests
         run: |
           python3 -m pylint test/ \
@@ -56,8 +58,6 @@ jobs:
       - name: Check for duplicate code in tests
         run: |
           jscpd --pattern "**/*.py" --threshold 0 --reporters console test/
-      - name: Install pytest
-        run: pip install pytest
       - name: Run unit tests
         run: |
           python3 -m pytest test/unit/ \
