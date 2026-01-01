@@ -19,7 +19,8 @@ jobs:
           RULES="$EMPTY_LINES, $KEY_ORDERING, $TRUTHY"
           yamllint --strict \
             --config-data "{extends: default, rules: {$RULES}}" \
-            .github/workflows/ci.yml
+            .github/workflows/ci.yml \
+            && echo "yamllint did not find any issues."
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -27,7 +28,7 @@ jobs:
       - name: Install markdownlint-cli
         run: npm install -g markdownlint-cli
       - name: markdownlint
-        run: markdownlint '*.md'
+        run: markdownlint '*.md' && echo "markdownlint did not find any issues."
       - name: Install package
         run: pip install -e .
       - name: Install pylint
