@@ -7,9 +7,6 @@ inputs:
   comment-prefix-map:
     description: Override extension mapping (e.g., .js=//,.ts=//)
     required: false
-  snippet-file:
-    description: Path to file containing the snippet
-    required: true
   files:
     description: Target files to check (space-separated)
     required: true
@@ -17,6 +14,9 @@ inputs:
     default: "false"
     description: Infer comment prefix from file extension
     required: false
+  snippet-file:
+    description: Path to file containing the snippet
+    required: true
 name: Contains Snippet
 runs:
   steps:
