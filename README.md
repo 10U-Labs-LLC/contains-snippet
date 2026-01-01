@@ -20,10 +20,11 @@ contains-snippet --content-file SNIPPET_FILE FILE [FILE ...]
 - `1` - One or more files are missing the snippet
 - `2` - Usage/configuration/runtime error
 
-### Matching Rules
+### Matching Rules (Default)
 
 - `.md` files: Raw substring match
 - `.py`, `.yml`, `.yaml` files: Commented match (lines prefixed with `# ` or `#`)
+- Other extensions: Raw substring match
 
 ### Examples
 
@@ -38,6 +39,60 @@ Check if a header comment exists in multiple Python files:
 ```bash
 contains-snippet --content-file header.txt src/*.py
 ```
+
+### Configuring Match Behavior
+
+#### Force Commented Matching: `--comment-prefix`
+
+Force all files to use commented matching with a specific prefix:
+
+```bash
+# Check JavaScript files with // comments
+contains-snippet --content-file header.txt --comment-prefix "//" src/*.js
+
+# Force .md files to match as comments (not raw)
+contains-snippet --content-file notice.txt --comment-prefix "#" docs/*.md
+```
+
+#### Infer from Extension: `--infer-comment-prefix`
+
+Enable extension-based inference using built-in mapping:
+
+| Extension | Match Type |
+|-----------|------------|
+| .md       | raw        |
+| .py       | # comments |
+| .yml      | # comments |
+| .yaml     | # comments |
+| (other)   | raw        |
+
+```bash
+contains-snippet --content-file header.txt --infer-comment-prefix src/*.py docs/*.md
+```
+
+#### Custom Extension Mapping: `--comment-prefix-map`
+
+Override or extend the built-in mapping (requires `--infer-comment-prefix`):
+
+```bash
+# Add JavaScript and TypeScript support
+contains-snippet --content-file header.txt \
+  --infer-comment-prefix \
+  --comment-prefix-map ".js=//,.ts=//" \
+  src/*
+
+# Override Python to use raw matching
+contains-snippet --content-file notice.txt \
+  --infer-comment-prefix \
+  --comment-prefix-map ".py=raw" \
+  src/*.py
+```
+
+#### Precedence
+
+1. `--comment-prefix` (highest) - forces global commented matching
+2. `--infer-comment-prefix` + `--comment-prefix-map` - per-file inference
+3. Default behavior - current hardcoded rules
 
 ## CI Checks
 

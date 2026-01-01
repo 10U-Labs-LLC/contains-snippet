@@ -114,3 +114,150 @@ class TestCliCommentedMatch:
         result = run_cli("--content-file", str(content_file), str(yml_file))
         assert result.returncode == 0
         assert result.stdout == ""
+
+
+@pytest.mark.integration
+class TestCommentPrefixFlag:
+    def test_forces_commented_match_on_md(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        md_file = tmp_path / "test.md"
+        md_file.write_text("# hello")
+
+        result = run_cli(
+            "--content-file", str(snippet), "--comment-prefix", "#", str(md_file)
+        )
+        assert result.returncode == 0
+        assert result.stdout == ""
+
+    def test_md_raw_fails_with_comment_prefix(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        md_file = tmp_path / "test.md"
+        md_file.write_text("hello")
+
+        result = run_cli(
+            "--content-file", str(snippet), "--comment-prefix", "#", str(md_file)
+        )
+        assert result.returncode == 1
+
+    def test_custom_prefix_double_slash(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        js_file = tmp_path / "test.js"
+        js_file.write_text("// hello")
+
+        result = run_cli(
+            "--content-file", str(snippet), "--comment-prefix", "//", str(js_file)
+        )
+        assert result.returncode == 0
+
+
+@pytest.mark.integration
+class TestInferCommentPrefixFlag:
+    def test_uses_builtin_mapping_py(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        py_file = tmp_path / "test.py"
+        py_file.write_text("# hello")
+
+        result = run_cli(
+            "--content-file", str(snippet), "--infer-comment-prefix", str(py_file)
+        )
+        assert result.returncode == 0
+
+    def test_uses_builtin_mapping_md_raw(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        md_file = tmp_path / "test.md"
+        md_file.write_text("hello")
+
+        result = run_cli(
+            "--content-file", str(snippet), "--infer-comment-prefix", str(md_file)
+        )
+        assert result.returncode == 0
+
+    def test_unknown_ext_defaults_to_raw(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        txt_file = tmp_path / "test.txt"
+        txt_file.write_text("hello")
+
+        result = run_cli(
+            "--content-file", str(snippet), "--infer-comment-prefix", str(txt_file)
+        )
+        assert result.returncode == 0
+
+    def test_unknown_ext_uses_raw_not_commented(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello\nworld")
+        txt_file = tmp_path / "test.txt"
+        txt_file.write_text("# hello\n# world")
+
+        result = run_cli(
+            "--content-file", str(snippet), "--infer-comment-prefix", str(txt_file)
+        )
+        assert result.returncode == 1
+
+
+@pytest.mark.integration
+class TestCommentPrefixMapFlag:
+    def test_overrides_builtin_to_raw(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        py_file = tmp_path / "test.py"
+        py_file.write_text("hello")
+
+        result = run_cli(
+            "--content-file", str(snippet),
+            "--infer-comment-prefix",
+            "--comment-prefix-map", ".py=raw",
+            str(py_file)
+        )
+        assert result.returncode == 0
+
+    def test_adds_new_extension(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        js_file = tmp_path / "test.js"
+        js_file.write_text("// hello")
+
+        result = run_cli(
+            "--content-file", str(snippet),
+            "--infer-comment-prefix",
+            "--comment-prefix-map", ".js=//",
+            str(js_file)
+        )
+        assert result.returncode == 0
+
+
+@pytest.mark.integration
+class TestPrecedence:
+    def test_comment_prefix_overrides_infer(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        py_file = tmp_path / "test.py"
+        py_file.write_text("// hello")
+
+        result = run_cli(
+            "--content-file", str(snippet),
+            "--comment-prefix", "//",
+            "--infer-comment-prefix",
+            str(py_file)
+        )
+        assert result.returncode == 0
+
+    def test_comment_prefix_overrides_map(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "s.txt"
+        snippet.write_text("hello")
+        py_file = tmp_path / "test.py"
+        py_file.write_text("; hello")
+
+        result = run_cli(
+            "--content-file", str(snippet),
+            "--comment-prefix", ";",
+            "--infer-comment-prefix",
+            "--comment-prefix-map", ".py=#",
+            str(py_file)
+        )
+        assert result.returncode == 0

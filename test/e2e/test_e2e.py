@@ -162,3 +162,95 @@ class TestMixedFileTypes:
         )
         assert result.returncode == 1
         assert result.stdout == ""
+
+
+@pytest.mark.e2e
+class TestFlagScenarios:
+    def test_mixed_extensions_with_infer(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "header.txt"
+        snippet.write_text("Copyright 2025")
+
+        py_file = tmp_path / "code.py"
+        py_file.write_text("# Copyright 2025\ndef main(): pass")
+
+        md_file = tmp_path / "README.md"
+        md_file.write_text("# Title\n\nCopyright 2025\n")
+
+        yml_file = tmp_path / "config.yml"
+        yml_file.write_text("#Copyright 2025\nkey: value")
+
+        result = run_cli(
+            "--content-file", str(snippet),
+            "--infer-comment-prefix",
+            str(py_file), str(md_file), str(yml_file)
+        )
+        assert result.returncode == 0
+        assert result.stdout == ""
+
+    def test_js_files_with_custom_prefix(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "license.txt"
+        snippet.write_text("MIT License")
+
+        js_file = tmp_path / "app.js"
+        js_file.write_text("// MIT License\nconst x = 1;")
+
+        result = run_cli(
+            "--content-file", str(snippet),
+            "--comment-prefix", "//",
+            str(js_file)
+        )
+        assert result.returncode == 0
+
+    def test_multiple_js_ts_files_with_map(self, tmp_path: Path) -> None:
+        snippet = tmp_path / "header.txt"
+        snippet.write_text("Copyright Notice")
+
+        js_file = tmp_path / "app.js"
+        js_file.write_text("// Copyright Notice\nconst x = 1;")
+
+        ts_file = tmp_path / "types.ts"
+        ts_file.write_text("//Copyright Notice\ntype X = string;")
+
+        result = run_cli(
+            "--content-file", str(snippet),
+            "--infer-comment-prefix",
+            "--comment-prefix-map", ".js=//,.ts=//",
+            str(js_file), str(ts_file)
+        )
+        assert result.returncode == 0
+
+    def test_realistic_multifile_project(self, tmp_path: Path) -> None:
+        header = tmp_path / "license_header.txt"
+        header.write_text("Copyright 2025 Acme Inc.\nLicensed under Apache 2.0")
+
+        py_file = tmp_path / "main.py"
+        py_file.write_text(
+            "#!/usr/bin/env python3\n"
+            "# Copyright 2025 Acme Inc.\n"
+            "# Licensed under Apache 2.0\n"
+            "\n"
+            "def main():\n"
+            "    print('Hello')\n"
+        )
+
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            "# Project\n\n"
+            "Copyright 2025 Acme Inc.\n"
+            "Licensed under Apache 2.0\n"
+        )
+
+        config = tmp_path / "config.yaml"
+        config.write_text(
+            "#Copyright 2025 Acme Inc.\n"
+            "#Licensed under Apache 2.0\n"
+            "setting: value\n"
+        )
+
+        result = run_cli(
+            "--content-file", str(header),
+            "--infer-comment-prefix",
+            str(py_file), str(readme), str(config)
+        )
+        assert result.returncode == 0
+        assert result.stdout == ""

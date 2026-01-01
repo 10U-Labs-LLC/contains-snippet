@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from contains_snippet.cli import parse_prefix_map
 from contains_snippet.matcher import check_file, commented_match, raw_match
 
 
@@ -122,3 +123,87 @@ class TestCheckFile:
         txt_file = tmp_path / "test.txt"
         txt_file.write_text("plain text content")
         assert check_file("text", txt_file)
+
+
+@pytest.mark.unit
+class TestCommentedMatchWithPrefix:
+    def test_custom_prefix_double_slash(self) -> None:
+        assert commented_match("hello", "// hello", prefix="//")
+
+    def test_custom_prefix_semicolon(self) -> None:
+        assert commented_match("hello", "; hello", prefix=";")
+
+    def test_custom_prefix_no_space(self) -> None:
+        assert commented_match("hello", "//hello", prefix="//")
+
+    def test_custom_prefix_multiline(self) -> None:
+        snippet = "line1\nline2"
+        content = "// line1\n// line2"
+        assert commented_match(snippet, content, prefix="//")
+
+    def test_custom_prefix_empty_line(self) -> None:
+        snippet = "before\n\nafter"
+        content = "// before\n//\n// after"
+        assert commented_match(snippet, content, prefix="//")
+
+
+@pytest.mark.unit
+class TestParsePrefixMap:
+    def test_single_entry(self) -> None:
+        assert parse_prefix_map(".py=#") == {".py": "#"}
+
+    def test_multiple_entries(self) -> None:
+        result = parse_prefix_map(".py=#,.js=//,.md=raw")
+        assert result == {".py": "#", ".js": "//", ".md": None}
+
+    def test_raw_value(self) -> None:
+        assert parse_prefix_map(".txt=raw") == {".txt": None}
+
+    def test_raw_case_insensitive(self) -> None:
+        assert parse_prefix_map(".txt=RAW") == {".txt": None}
+
+    def test_extension_normalized_lowercase(self) -> None:
+        assert parse_prefix_map(".PY=#") == {".py": "#"}
+
+    def test_whitespace_stripped(self) -> None:
+        assert parse_prefix_map(" .py = # ") == {".py": "#"}
+
+
+@pytest.mark.unit
+class TestCheckFileWithCommentPrefix:
+    def test_forces_commented_on_md(self, tmp_path: Path) -> None:
+        md_file = tmp_path / "test.md"
+        md_file.write_text("# hello")
+        assert check_file("hello", md_file, comment_prefix="#")
+
+    def test_custom_prefix_on_any_file(self, tmp_path: Path) -> None:
+        js_file = tmp_path / "test.js"
+        js_file.write_text("// hello")
+        assert check_file("hello", js_file, comment_prefix="//")
+
+
+@pytest.mark.unit
+class TestCheckFileWithPrefixMap:
+    def test_prefix_map_uses_mapped_prefix(self, tmp_path: Path) -> None:
+        md_file = tmp_path / "test.md"
+        md_file.write_text("# hello")
+        prefix_map: dict[str, str | None] = {".md": "#"}
+        assert check_file("hello", md_file, prefix_map=prefix_map)
+
+    def test_prefix_map_raw_value(self, tmp_path: Path) -> None:
+        py_file = tmp_path / "test.py"
+        py_file.write_text("hello")
+        prefix_map: dict[str, str | None] = {".py": None}
+        assert check_file("hello", py_file, prefix_map=prefix_map)
+
+    def test_prefix_map_unknown_ext_defaults_raw(self, tmp_path: Path) -> None:
+        txt_file = tmp_path / "test.txt"
+        txt_file.write_text("hello")
+        prefix_map: dict[str, str | None] = {".py": "#"}
+        assert check_file("hello", txt_file, prefix_map=prefix_map)
+
+    def test_prefix_map_unknown_ext_uses_raw(self, tmp_path: Path) -> None:
+        txt_file = tmp_path / "test.txt"
+        txt_file.write_text("# hello\n# world")
+        prefix_map: dict[str, str | None] = {".py": "#"}
+        assert not check_file("hello\nworld", txt_file, prefix_map=prefix_map)

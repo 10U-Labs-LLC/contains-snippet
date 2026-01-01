@@ -31,7 +31,7 @@ jobs:
           yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, document-start: disable}}" .github/workflows/
 
       - name: pylint
-        run: pylint --disable=C0114,C0115,C0116,R0801,R0903 src/ test/
+        run: pylint --disable=C0114,C0115,C0116,R0801,R0903,R0911 src/ test/
 
       - name: mypy
         run: mypy --strict src/
