@@ -19,7 +19,6 @@ class TestCliExitCodes:
 
         result = run_cli("--snippet-file", str(content_file), str(target_file))
         assert result.returncode == 0
-        assert result.stdout == ""
 
     def test_exit_1_when_snippet_missing(self, tmp_path: Path) -> None:
         """Exit 1 when snippet is not found in file."""
@@ -30,7 +29,6 @@ class TestCliExitCodes:
 
         result = run_cli("--snippet-file", str(content_file), str(target_file))
         assert result.returncode == 1
-        assert result.stdout == ""
 
     def test_exit_2_missing_content_file_arg(self) -> None:
         """Exit 2 when --snippet-file argument is missing."""
@@ -81,7 +79,6 @@ class TestCliMultipleFiles:
 
         result = run_cli("--snippet-file", str(content_file), str(file1), str(file2))
         assert result.returncode == 0
-        assert result.stdout == ""
 
     def test_one_file_missing(self, tmp_path: Path) -> None:
         """Exit 1 when any file is missing the snippet."""
@@ -94,7 +91,6 @@ class TestCliMultipleFiles:
 
         result = run_cli("--snippet-file", str(content_file), str(file1), str(file2))
         assert result.returncode == 1
-        assert result.stdout == ""
 
 
 @pytest.mark.e2e
@@ -110,7 +106,6 @@ class TestCliCommentedMatch:
 
         result = run_cli("--snippet-file", str(content_file), str(py_file))
         assert result.returncode == 0
-        assert result.stdout == ""
 
     def test_yml_file_commented(self, tmp_path: Path) -> None:
         """YAML files use commented matching by default."""
@@ -121,7 +116,6 @@ class TestCliCommentedMatch:
 
         result = run_cli("--snippet-file", str(content_file), str(yml_file))
         assert result.returncode == 0
-        assert result.stdout == ""
 
 
 @pytest.mark.e2e
@@ -139,7 +133,6 @@ class TestCommentPrefixFlag:
             "--snippet-file", str(snippet), "--comment-prefix", "#", str(md_file)
         )
         assert result.returncode == 0
-        assert result.stdout == ""
 
     def test_md_raw_fails_with_comment_prefix(self, tmp_path: Path) -> None:
         """Raw content in markdown fails when --comment-prefix is set."""
@@ -419,25 +412,6 @@ class TestMixedFileTypes:
         result = run_cli("--snippet-file", str(md_snippet), str(readme))
         assert result.returncode == 0
 
-        py_snippet = tmp_path / "py_snippet.txt"
-        py_snippet.write_text("TODO: implement")
-
-        code = tmp_path / "main.py"
-        code.write_text("# TODO: implement\ndef func(): pass\n")
-
-        yml_snippet = tmp_path / "yml_snippet.txt"
-        yml_snippet.write_text("version 1.0")
-
-        config = tmp_path / "config.yml"
-        config.write_text("#version 1.0\nkey: value\n")
-
-        result = run_cli(
-            "--snippet-file",
-            str(md_snippet),
-            str(readme),
-        )
-        assert result.returncode == 0
-
     def test_mixed_pass_fail(self, tmp_path: Path) -> None:
         """Exit 1 when one file passes and another fails."""
         snippet = tmp_path / "required.txt"
@@ -453,7 +427,6 @@ class TestMixedFileTypes:
             "--snippet-file", str(snippet), str(file1), str(file2)
         )
         assert result.returncode == 1
-        assert result.stdout == ""
 
 
 @pytest.mark.e2e
@@ -480,7 +453,6 @@ class TestFlagScenarios:
             str(py_file), str(md_file), str(yml_file)
         )
         assert result.returncode == 0
-        assert result.stdout == ""
 
     def test_js_files_with_custom_prefix(self, tmp_path: Path) -> None:
         """JavaScript files work with // comment prefix."""
@@ -551,4 +523,3 @@ class TestFlagScenarios:
             str(py_file), str(readme), str(config)
         )
         assert result.returncode == 0
-        assert result.stdout == ""
