@@ -20,4 +20,5 @@ def test_main_module_calls_main(tmp_path: Path) -> None:
     """Running as __main__ calls the main function."""
     (tmp_path / "snippet.txt").write_text("content")
     (tmp_path / "target.md").write_text("content")
-    assert run_module_main(["--snippet-file", str(tmp_path / "snippet.txt"), str(tmp_path / "target.md")]) == 0
+    snippet = str(tmp_path / "snippet.txt")
+    assert run_module_main(["--snippet-file", snippet, str(tmp_path / "target.md")]) == 0

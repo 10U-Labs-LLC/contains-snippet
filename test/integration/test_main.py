@@ -20,4 +20,5 @@ def test_main_module_invokes_cli(tmp_path: Path) -> None:
     """Running python -m contains_snippet calls the main function."""
     (tmp_path / "content.txt").write_text("hello")
     (tmp_path / "check.md").write_text("hello")
-    assert run_as_main(["--snippet-file", str(tmp_path / "content.txt"), str(tmp_path / "check.md")]) == 0
+    snippet = str(tmp_path / "content.txt")
+    assert run_as_main(["--snippet-file", snippet, str(tmp_path / "check.md")]) == 0

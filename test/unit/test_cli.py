@@ -4,8 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from ..conftest import run_main_with_args
 from contains_snippet.cli import BUILTIN_PREFIX_MAP, parse_prefix_map
+
+from ..conftest import run_main_with_args
 
 
 @pytest.mark.unit
@@ -66,13 +67,15 @@ class TestMain:
         """Exit 0 when snippet is found in all files."""
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "t.md").write_text("hello world")
-        assert run_main_with_args(["--snippet-file", str(tmp_path / "s.txt"), str(tmp_path / "t.md")]) == 0
+        args = ["--snippet-file", str(tmp_path / "s.txt"), str(tmp_path / "t.md")]
+        assert run_main_with_args(args) == 0
 
     def test_snippet_not_found_exits_1(self, tmp_path: Path) -> None:
         """Exit 1 when snippet is not found."""
         (tmp_path / "s.txt").write_text("missing")
         (tmp_path / "t.md").write_text("hello world")
-        assert run_main_with_args(["--snippet-file", str(tmp_path / "s.txt"), str(tmp_path / "t.md")]) == 1
+        args = ["--snippet-file", str(tmp_path / "s.txt"), str(tmp_path / "t.md")]
+        assert run_main_with_args(args) == 1
 
     def test_missing_snippet_file_arg_exits_2(self) -> None:
         """Exit 2 when --snippet-file argument is missing."""
@@ -92,14 +95,16 @@ class TestMain:
         """--comment-prefix forces commented matching."""
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "t.md").write_text("# hello")
-        args = ["--snippet-file", str(tmp_path / "s.txt"), "--comment-prefix", "#", str(tmp_path / "t.md")]
+        snippet = str(tmp_path / "s.txt")
+        args = ["--snippet-file", snippet, "--comment-prefix", "#", str(tmp_path / "t.md")]
         assert run_main_with_args(args) == 0
 
     def test_infer_comment_prefix_flag(self, tmp_path: Path) -> None:
         """--infer-comment-prefix uses extension mapping."""
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "t.py").write_text("# hello")
-        args = ["--snippet-file", str(tmp_path / "s.txt"), "--infer-comment-prefix", str(tmp_path / "t.py")]
+        snippet = str(tmp_path / "s.txt")
+        args = ["--snippet-file", snippet, "--infer-comment-prefix", str(tmp_path / "t.py")]
         assert run_main_with_args(args) == 0
 
     def test_comment_prefix_map_flag(self, tmp_path: Path) -> None:
@@ -121,7 +126,8 @@ class TestMain:
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "f1.md").write_text("hello")
         (tmp_path / "f2.md").write_text("hello world")
-        args = ["--snippet-file", str(tmp_path / "s.txt"), str(tmp_path / "f1.md"), str(tmp_path / "f2.md")]
+        snippet = str(tmp_path / "s.txt")
+        args = ["--snippet-file", snippet, str(tmp_path / "f1.md"), str(tmp_path / "f2.md")]
         assert run_main_with_args(args) == 0
 
     def test_multiple_files_one_missing(self, tmp_path: Path) -> None:
@@ -129,5 +135,6 @@ class TestMain:
         (tmp_path / "s.txt").write_text("hello")
         (tmp_path / "f1.md").write_text("hello")
         (tmp_path / "f2.md").write_text("goodbye")
-        args = ["--snippet-file", str(tmp_path / "s.txt"), str(tmp_path / "f1.md"), str(tmp_path / "f2.md")]
+        snippet = str(tmp_path / "s.txt")
+        args = ["--snippet-file", snippet, str(tmp_path / "f1.md"), str(tmp_path / "f2.md")]
         assert run_main_with_args(args) == 1
