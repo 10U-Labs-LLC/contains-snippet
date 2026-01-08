@@ -20,7 +20,7 @@ inputs:
 name: Contains Snippet
 runs:
   steps:
-    - run: pip install git+https://github.com/10U-Labs-LLC/contains-snippet.git
+    - run: python3 -m pip install contains-snippet
       shell: bash
     - run: |
         ARGS="--snippet-file ${{ inputs.snippet-file }}"

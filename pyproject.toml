@@ -1,6 +1,6 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "setuptools-scm>=8.0"]
 
 [project]
 authors = [{name = "10U Labs", email = "dev@10ulabs.com"}]
@@ -16,11 +16,11 @@ classifiers = [
     "Topic :: Software Development :: Quality Assurance",
 ]
 description = "CLI tool to check if a snippet exists in files"
+dynamic = ["version"]
 license = "Apache-2.0"
 name = "contains-snippet"
 readme = "README.md"
 requires-python = ">=3.10"
-version = "1.0.2"
 
 [project.scripts]
 contains-snippet = "contains_snippet.cli:main"
@@ -29,3 +29,5 @@ contains-snippet = "contains_snippet.cli:main"
 Homepage = "https://github.com/10U-Labs-LLC/contains-snippet"
 Issues = "https://github.com/10U-Labs-LLC/contains-snippet/issues"
 Repository = "https://github.com/10U-Labs-LLC/contains-snippet"
+
+[tool.setuptools_scm]

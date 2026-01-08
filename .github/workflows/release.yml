@@ -1,0 +1,40 @@
+---
+concurrency:
+  cancel-in-progress: true
+  group: release-${{ github.ref }}
+jobs:
+  release:
+    permissions:
+      contents: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install build tools
+        run: pip install build
+      - name: Build package
+        run: python -m build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        name: Create GitHub Release
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --generate-notes
+      - name: Update latest tag
+        run: |
+          git tag -f latest
+          git push origin latest --force
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
