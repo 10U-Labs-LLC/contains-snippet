@@ -1,19 +1,10 @@
 """Integration tests for the CLI module."""
 
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
-from contains_snippet.cli import main
-
-
-def run_main_with_args(args: list[str]) -> int:
-    """Run main() with patched sys.argv and return exit code."""
-    with patch("sys.argv", ["prog"] + args):
-        with pytest.raises(SystemExit) as exc_info:
-            main()
-        return int(exc_info.value.code or 0)
+from ..conftest import run_main_with_args
 
 
 @pytest.mark.integration
