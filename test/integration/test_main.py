@@ -1,21 +1,22 @@
 """Integration tests for the __main__ module."""
 
-import importlib
+import runpy
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 
 
 @pytest.mark.integration
-def test_main_module_invokes_cli(tmp_path: pytest.TempPathFactory) -> None:
-    """Importing __main__ calls the main function."""
-    snippet = tmp_path / "s.txt"  # type: ignore[operator]
-    snippet.write_text("x")
-    target = tmp_path / "t.md"  # type: ignore[operator]
-    target.write_text("x")
+def test_main_module_invokes_cli(tmp_path: Path) -> None:
+    """Running python -m contains_snippet calls the main function."""
+    content_file = tmp_path / "content.txt"
+    content_file.write_text("hello")
+    check_file = tmp_path / "check.md"
+    check_file.write_text("hello")
 
-    with patch("sys.argv", ["prog", "--snippet-file", str(snippet), str(target)]):
-        with pytest.raises(SystemExit) as exc_info:
-            import contains_snippet.__main__  # pylint: disable=import-outside-toplevel
-            importlib.reload(contains_snippet.__main__)
-        assert exc_info.value.code == 0
+    argv = ["prog", "--snippet-file", str(content_file), str(check_file)]
+    with patch("sys.argv", argv):
+        with pytest.raises(SystemExit) as exc:
+            runpy.run_module("contains_snippet", run_name="__main__")
+        assert exc.value.code == 0
